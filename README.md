@@ -5,9 +5,9 @@ A new Flutter project.
 ## Getting Started
 
 jalankan di gitbash perintah
-``bash
+```bash
 flutter pub get
-``
+```
 
 This project is a starting point for a Flutter application.
 
