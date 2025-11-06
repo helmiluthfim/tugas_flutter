@@ -31,53 +31,132 @@ class _PasienFormState extends State<PasienForm> {
   }
 
   @override
+  void dispose() {
+    _noRmController.dispose();
+    _namaController.dispose();
+    _tglLahirController.dispose();
+    _telpController.dispose();
+    _alamatController.dispose();
+    super.dispose();
+  }
+
+  InputDecoration _inputDecoration(String label) {
+    return InputDecoration(
+      labelText: label,
+      labelStyle: const TextStyle(color: Colors.blueAccent),
+      filled: true,
+      fillColor: Colors.white,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Colors.blueAccent),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Colors.blue, width: 2),
+      ),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF3F6FB),
       appBar: AppBar(
-        title: Text(widget.pasien == null ? 'Tambah Pasien' : 'Ubah Pasien'),
+        backgroundColor: Colors.white,
+        elevation: 1,
+        centerTitle: true,
+        title: Text(
+          widget.pasien == null ? 'Tambah Pasien' : 'Ubah Data Pasien',
+          style: const TextStyle(
+            color: Colors.blueAccent,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        iconTheme: const IconThemeData(color: Colors.blueAccent),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(20),
         child: Form(
           key: _formKey,
           child: ListView(
             children: [
+              const SizedBox(height: 10),
               TextFormField(
                 controller: _noRmController,
-                decoration: const InputDecoration(labelText: 'Nomor RM'),
+                decoration: _inputDecoration('Nomor RM'),
+                validator: (value) =>
+                    value!.isEmpty ? 'Nomor RM wajib diisi' : null,
               ),
+              const SizedBox(height: 16),
               TextFormField(
                 controller: _namaController,
-                decoration: const InputDecoration(labelText: 'Nama'),
+                decoration: _inputDecoration('Nama Pasien'),
+                validator: (value) =>
+                    value!.isEmpty ? 'Nama wajib diisi' : null,
               ),
+              const SizedBox(height: 16),
               TextFormField(
                 controller: _tglLahirController,
-                decoration: const InputDecoration(labelText: 'Tanggal Lahir'),
+                decoration: _inputDecoration('Tanggal Lahir (YYYY-MM-DD)'),
+                validator: (value) =>
+                    value!.isEmpty ? 'Tanggal lahir wajib diisi' : null,
               ),
+              const SizedBox(height: 16),
               TextFormField(
                 controller: _telpController,
-                decoration: const InputDecoration(labelText: 'Nomor Telepon'),
+                keyboardType: TextInputType.phone,
+                decoration: _inputDecoration('Nomor Telepon'),
+                validator: (value) =>
+                    value!.isEmpty ? 'Nomor telepon wajib diisi' : null,
               ),
+              const SizedBox(height: 16),
               TextFormField(
                 controller: _alamatController,
-                decoration: const InputDecoration(labelText: 'Alamat'),
+                maxLines: 3,
+                decoration: _inputDecoration('Alamat Lengkap'),
+                validator: (value) =>
+                    value!.isEmpty ? 'Alamat wajib diisi' : null,
               ),
-              const SizedBox(height: 20),
-              ElevatedButton(
+              const SizedBox(height: 30),
+              ElevatedButton.icon(
                 onPressed: () {
-                  final pasienBaru = Pasien(
-                    id:
-                        widget.pasien?.id ??
-                        DateTime.now().millisecondsSinceEpoch,
-                    nomorRm: _noRmController.text,
-                    nama: _namaController.text,
-                    tanggalLahir: _tglLahirController.text,
-                    nomorTelepon: _telpController.text,
-                    alamat: _alamatController.text,
-                  );
-                  Navigator.pop(context, pasienBaru);
+                  if (_formKey.currentState!.validate()) {
+                    final pasienBaru = Pasien(
+                      id:
+                          widget.pasien?.id ??
+                          DateTime.now().millisecondsSinceEpoch,
+                      nomorRm: _noRmController.text,
+                      nama: _namaController.text,
+                      tanggalLahir: _tglLahirController.text,
+                      nomorTelepon: _telpController.text,
+                      alamat: _alamatController.text,
+                    );
+                    Navigator.pop(context, pasienBaru);
+                  }
                 },
-                child: Text(widget.pasien == null ? 'Simpan' : 'Perbarui'),
+                icon: const Icon(Icons.save_rounded, color: Colors.white),
+                label: Text(
+                  widget.pasien == null ? 'Simpan' : 'Perbarui',
+                  style: const TextStyle(
+                    color: Colors.white, // label putih
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blueAccent,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32,
+                    vertical: 14,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  elevation: 4,
+                  shadowColor: Colors.blueAccent.withOpacity(0.3),
+                ),
               ),
             ],
           ),
